@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calendar & Time</title>
+    <link
+      rel="icon"
+      href="https://img.icons8.com/external-frizty-kerismaker/48/external-Calender-internet-advertising-frizty-kerismaker.png"
+      type="image/png"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+      body {
+        background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        color: white;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+        justify-content: center;
+        align-items: center;
+        max-width: 100%;
+      }
+
+      .calendar-card {
+        text-align: center;
+        min-width: 320px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 200px;
+      }
+      .left {
+        background: linear-gradient(135deg, #2c3e76 0%, #1a2456 100%);
+        height: 100%;
+        flex: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15px 0 0 15px;
+      }
+      .line {
+        width: 500px;
+        max-width: 90%;
+        margin: 0 auto;
+        height: 2px;
+        border-radius: 5px;
+        background-color: #4a90e2;
+      }
+      .right {
+        background: linear-gradient(135deg, #f35100 0%, #c4130a 100%);
+        height: 100%;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0 15px 15px 0;
+      }
+
+      .month-year {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        font-size: 28px;
+        font-weight: bold;
+        color: #f8f9fa;
+      }
+
+      .day-name {
+        font-size: 18px;
+        opacity: 0.95;
+        letter-spacing: 1px;
+        color: #e0e7ff;
+      }
+
+      .day-number {
+        font-size: 80px;
+        font-weight: bold;
+        margin-bottom: 8px;
+        line-height: 1;
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+        color: #ffffff;
+      }
+
+      .time-card {
+        padding: 16px 40px;
+        text-align: center;
+        min-width: 320px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 5px;
+        backdrop-filter: blur(10px);
+      }
+
+      .time-title {
+        font-size: 26px;
+        color: #ffffff;
+        font-weight: bold;
+        opacity: 0.95;
+        letter-spacing: 2px;
+      }
+
+      .clock {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        margin-top: 8px;
+        color: #f8f9fa;
+      }
+
+      .time-value {
+        font-size: 48px;
+        font-weight: bold;
+        font-family: "Courier New", monospace;
+        color: #ffffff;
+      }
+
+      .separator {
+        font-size: 48px;
+        font-weight: bold;
+        margin: 0 5px;
+        color: #4a90e2;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          flex-direction: column;
+          gap: 20px;
+        }
+
+        .calendar-card,
+        .time-card {
+          min-width: 280px;
+        }
+
+        .day-number {
+          font-size: 80px;
+        }
+
+        .time-value {
+          font-size: 36px;
+        }
+
+        .separator {
+          font-size: 36px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="calendar-card">
+        <div class="left">
+          <div class="day-number" id="dayNumber">21</div>
+          <div class="day-name" id="dayName">Friday</div>
+        </div>
+        <div class="right">
+          <div class="month-year" id="monthYear">
+            <span>September</span><span> 2001</span>
+          </div>
+        </div>
+      </div>
+      <div class="line"></div>
+      <div class="time-card">
+        <div class="time-title">Current Time</div>
+        <div class="clock">
+          <div class="time-value" id="hours">00</div>
+          <div class="separator">:</div>
+          <div class="time-value" id="minutes">00</div>
+          <div class="separator">:</div>
+          <div class="time-value" id="seconds">00</div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    const dayNames = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+
+    function updateDateTime() {
+      let now = new Date();
+
+      let year = now.getFullYear();
+      let month = monthNames[now.getMonth()];
+      let dayNumber = now.getDate();
+      let dayName = dayNames[now.getDay()];
+
+      document.getElementById("monthYear").innerHTML =
+        `<span>${month}</span><span> ${year}</span>`;
+      document.getElementById("dayName").innerHTML = dayName;
+      document.getElementById("dayNumber").innerHTML = dayNumber;
+
+      let hours = now.getHours();
+      let minutes = now.getMinutes();
+      let seconds = now.getSeconds();
+
+      document.getElementById("hours").innerHTML = hours
+        .toString()
+        .padStart(2, "0");
+      document.getElementById("minutes").innerHTML = minutes
+        .toString()
+        .padStart(2, "0");
+      document.getElementById("seconds").innerHTML = seconds
+        .toString()
+        .padStart(2, "0");
+    }
+
+    // Initial call to display immediately
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+  </script>
+</html>

@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Drag&Drop</title>
+    <link
+      rel="icon"
+      href="https://img.icons8.com/ios-filled/50/drag-handle.png"
+      type="image/png"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+      body {
+        background: linear-gradient(to right, #009ffc, #1da1f2);
+      }
+      .container {
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .title {
+        font-size: 36px;
+        color: rgb(0, 55, 87);
+      }
+      .title span {
+        margin: 0 4px;
+        color: black;
+        font-size: 42px;
+      }
+      .box {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+      }
+      #left,
+      #right {
+        width: 300px;
+        min-height: 400px;
+        margin: 20px;
+        border: 2px dashed black;
+        border-radius: 2px;
+      }
+      .list {
+        background-color: #0000006c;
+        height: 60px;
+        margin: 12px;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 0px 16px;
+        border: 1px solid black;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="title">Drag<span>&</span>Drop</h1>
+      <div class="box">
+        <div id="left">
+          <div class="list" draggable="true">
+            <img
+              width="20"
+              height="20"
+              src="https://img.icons8.com/ios-filled/50/drag-handle.png"
+              alt="drag-handle"
+            />
+            list item 1
+          </div>
+          <div class="list" draggable="true">
+            <img
+              width="20"
+              height="20"
+              src="https://img.icons8.com/ios-filled/50/drag-handle.png"
+              alt="drag-handle"
+            />
+            list item 2
+          </div>
+          <div class="list" draggable="true">
+            <img
+              width="20"
+              height="20"
+              src="https://img.icons8.com/ios-filled/50/drag-handle.png"
+              alt="drag-handle"
+            />
+            list item 3
+          </div>
+          <div class="list" draggable="true">
+            <img
+              width="20"
+              height="20"
+              src="https://img.icons8.com/ios-filled/50/drag-handle.png"
+              alt="drag-handle"
+            />
+            list item 4
+          </div>
+        </div>
+        <div id="right"></div>
+      </div>
+    </div>
+    <script>
+      let lists = document.getElementsByClassName("list");
+      let rightBox = document.getElementById("right");
+      let leftBox = document.getElementById("left");
+      for (list of lists) {
+        list.addEventListener("dragstart", function (e) {
+          let selected = e.target;
+          // handle drag and drop for right box
+          rightBox.addEventListener("dragover", function (e) {
+            e.preventDefault();
+          });
+          rightBox.addEventListener("drop", function (e) {
+            rightBox.appendChild(selected);
+            selected = null;
+          });
+          // handle drag and drop for left box
+          leftBox.addEventListener("dragover", function (e) {
+            e.preventDefault();
+          });
+          leftBox.addEventListener("drop", function (e) {
+            leftBox.appendChild(selected);
+            selected = null;
+          });
+        });
+      }
+    </script>
+  </body>
+</html>
