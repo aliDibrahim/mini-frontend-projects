@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR code Generator</title>
+    <link
+      rel="icon"
+      href="https://img.icons8.com/ios-filled/50/qr-code--v1.png"
+      type="image/png"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Segoe UI", Roboto, Arial, Helvetica, sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #03a9f4, #ff9800);
+        padding: 20px;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 480px;
+        background-color: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        border-radius: 4px;
+        padding: 32px 28px;
+        box-shadow:
+          0 20px 40px rgba(0, 0, 0, 0.25),
+          0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      .title {
+        text-align: center;
+        font-size: 2.2rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+        margin-bottom: 24px;
+        color: #1e1e2f;
+      }
+      .title span {
+        background: linear-gradient(135deg, #03a9f4, #ff9800);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-right: 6px;
+      }
+
+      .label {
+        font-size: 16px;
+        font-weight: 500;
+        color: #1e1e2f;
+        margin-bottom: 6px;
+        display: block;
+        letter-spacing: 0.3px;
+      }
+
+      .input-field {
+        width: 100%;
+        border: 1px solid #666666;
+        outline: none;
+        padding: 14px 18px;
+        border-radius: 4px;
+        font-size: 1rem;
+        background-color: transparent;
+        transition:
+          border-color 0.25s,
+          box-shadow 0.25s,
+          background-color 0.2s;
+        color: #1e1e2f;
+        font-weight: 450;
+        margin-bottom: 18px;
+      }
+
+      .input-field:focus {
+        border-color: #da8809;
+      }
+
+      .input-field::placeholder {
+        color: #5e5e5e;
+        transition: opacity 0.25s ease;
+      }
+      .input-field:focus::placeholder {
+        opacity: 0;
+      }
+
+      .error {
+        animation: err 0.1s linear 5;
+        border-color: #ff9800;
+      }
+      @keyframes err {
+        0% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-2px);
+        }
+        50% {
+          transform: translateX(0px);
+        }
+        75% {
+          transform: translateX(2px);
+        }
+        100% {
+          transform: translateX(0px);
+        }
+      }
+
+      #imgBox {
+        width: 100%;
+        max-width: 200px;
+        margin: 6px auto 16px;
+        border-radius: 4px;
+        max-height: 0;
+        overflow: hidden;
+        transition:
+          max-height 0.6s cubic-bezier(0.2, 0.9, 0.3, 1),
+          margin 0.3s ease,
+          padding 0.3s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #imgBox.show-img {
+        max-height: 300px;
+        margin: 16px auto 24px;
+        padding: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.6);
+        background-color: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      }
+
+      #imgBox img {
+        width: 100%;
+        height: auto;
+        display: block;
+        border-radius: 4px;
+        image-rendering: auto;
+      }
+
+      .loader-overlay {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px 10px;
+        gap: 12px;
+        width: 100%;
+      }
+      .loader-overlay.active {
+        display: flex;
+      }
+
+      .spinner {
+        width: 48px;
+        height: 48px;
+        border: 4px solid rgba(3, 169, 244, 0.15);
+        border-top-color: #03a9f4;
+        border-radius: 50%;
+        animation: spin 0.9s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .action-group {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 6px;
+      }
+
+      .btn {
+        width: 80%;
+        padding: 10px;
+        margin: 0px auto;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition-duration: 0.3s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        letter-spacing: 0.4px;
+      }
+
+      .btn-primary {
+        background: #0085be;
+        color: white;
+      }
+      .btn-primary:hover {
+        background: #006894;
+      }
+      .btn-primary:active {
+        transform: scale(0.97);
+      }
+
+      .btn-download {
+        background: #2d2d44;
+        color: white;
+      }
+      .btn-download:hover {
+        background: #1e1e2f;
+      }
+      .btn-download:disabled {
+        opacity: 0.4;
+        pointer-events: none;
+        filter: grayscale(0.4);
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%) translateY(20px);
+        background-color: #e68a00;
+        color: #f0f4ff;
+        padding: 12px 28px;
+        border-radius: 4px;
+        font-size: 14px;
+        opacity: 0;
+        visibility: hidden;
+        transition:
+          opacity 0.25s ease,
+          transform 0.3s ease,
+          visibility 0.25s;
+        z-index: 999;
+        pointer-events: none;
+      }
+      .toast.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(-50%) translateY(0);
+      }
+
+      @media (max-width: 480px) {
+        .container {
+          padding: 24px 18px;
+        }
+        .title {
+          font-size: 1.9rem;
+        }
+        .btn {
+          padding: 13px 16px;
+        }
+      }
+      #imgBox.loading.show-img {
+        background-color: transparent;
+        border: none;
+        backdrop-filter: none;
+        box-shadow: none;
+      }
+
+      #imgBox.loading img {
+        display: none;
+      }
+      #imgBox.loading .loader-overlay {
+        display: flex;
+      }
+      /* #imgBox.loading.show-img {
+        max-height: 300px;
+        padding: 16px;
+      } */
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="title"><span>QR</span>Code Generator</h1>
+
+      <label class="label" for="qr-text">Enter text or URL</label>
+      <input
+        type="text"
+        id="qr-text"
+        class="input-field"
+        placeholder="URL or text..."
+        value=""
+      />
+
+      <div id="imgBox">
+        <img src="" alt="qr-code" id="qr-img" />
+        <div class="loader-overlay" id="loaderOverlay">
+          <div class="spinner"></div>
+        </div>
+      </div>
+
+      <div class="action-group">
+        <button class="btn btn-primary" id="generateBtn">Generate QR</button>
+        <button class="btn btn-download" id="downloadBtn" disabled>
+          Download PNG
+        </button>
+      </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+      (function () {
+        const imgBox = document.getElementById("imgBox");
+        const qrImage = document.getElementById("qr-img");
+        const qrText = document.getElementById("qr-text");
+        const generateBtn = document.getElementById("generateBtn");
+        const downloadBtn = document.getElementById("downloadBtn");
+        const loaderOverlay = document.getElementById("loaderOverlay");
+        const toast = document.getElementById("toast");
+
+        let toastTimer = null;
+        let currentImageSrc = "";
+        let currentImageData = null; // store canvas data for download
+
+        function showToast(msg, duration = 2000) {
+          if (toastTimer) clearTimeout(toastTimer);
+          toast.textContent = msg;
+          toast.classList.add("show");
+          toastTimer = setTimeout(() => {
+            toast.classList.remove("show");
+            toastTimer = null;
+          }, duration);
+        }
+
+        function setLoading(isLoading) {
+          if (isLoading) {
+            imgBox.classList.add("loading");
+            if (!imgBox.classList.contains("show-img")) {
+              imgBox.classList.add("show-img");
+            }
+            downloadBtn.disabled = true;
+          } else {
+            imgBox.classList.remove("loading");
+            downloadBtn.disabled = currentImageData === null;
+          }
+        }
+
+        function generateQR() {
+          const text = qrText.value.trim();
+          if (text.length === 0) {
+            qrText.classList.add("error");
+            setTimeout(() => qrText.classList.remove("error"), 500);
+            showToast("Please enter text or URL", 2000);
+            return;
+          }
+
+          setLoading(true);
+          qrImage.style.display = "none";
+          currentImageData = null;
+          currentImageSrc = "";
+
+          const apiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(text)}`;
+
+          const img = new Image();
+          // Sets crossOrigin to allow loading from external servers
+          img.crossOrigin = "anonymous";
+          img.src = apiUrl;
+
+          img.onload = function () {
+            // Create canvas to capture the image data
+            const canvas = document.createElement("canvas");
+            canvas.width = img.naturalWidth || 300;
+            canvas.height = img.naturalHeight || 300;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            // Store the data URL for download
+            currentImageData = canvas.toDataURL("image/png");
+            currentImageSrc = apiUrl;
+
+            // Display the image
+            qrImage.src = currentImageData;
+            qrImage.style.display = "block";
+
+            setLoading(false);
+            downloadBtn.disabled = false;
+            imgBox.classList.add("show-img");
+            showToast("QR ready", 1200);
+          };
+
+          img.onerror = function () {
+            // Fallback: try to load directly
+            qrImage.src = apiUrl;
+            qrImage.style.display = "block";
+            currentImageSrc = apiUrl;
+            // Try to get canvas data after a short delay
+            setTimeout(() => {
+              try {
+                const canvas = document.createElement("canvas");
+                canvas.width = 300;
+                canvas.height = 300;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(qrImage, 0, 0, 300, 300);
+                currentImageData = canvas.toDataURL("image/png");
+              } catch (e) {
+                currentImageData = apiUrl;
+              }
+              setLoading(false);
+              downloadBtn.disabled = false;
+              imgBox.classList.add("show-img");
+              showToast("QR generated", 1500);
+            }, 500);
+          };
+
+          // Safety timeout
+          setTimeout(() => {
+            if (imgBox.classList.contains("loading")) {
+              qrImage.src = apiUrl;
+              qrImage.style.display = "block";
+              currentImageSrc = apiUrl;
+              setTimeout(() => {
+                try {
+                  const canvas = document.createElement("canvas");
+                  canvas.width = 300;
+                  canvas.height = 300;
+                  const ctx = canvas.getContext("2d");
+                  ctx.drawImage(qrImage, 0, 0, 300, 300);
+                  currentImageData = canvas.toDataURL("image/png");
+                } catch (e) {
+                  currentImageData = apiUrl;
+                }
+                setLoading(false);
+                downloadBtn.disabled = false;
+                imgBox.classList.add("show-img");
+                showToast("Generation took longer, but ready", 1800);
+              }, 300);
+            }
+          }, 6000);
+        }
+
+        function downloadQR() {
+          if (!currentImageData) {
+            showToast("No QR to download. Generate one first.", 1800);
+            return;
+          }
+
+          if (imgBox.classList.contains("loading")) {
+            showToast("Please wait, generating…", 1500);
+            return;
+          }
+
+          try {
+            const link = document.createElement("a");
+            link.download = `qrcode_${Date.now()}.png`;
+            link.href = currentImageData;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast("Download started!", 1500);
+          } catch (e) {
+            showToast("Could not download", 1500);
+            console.error("Download error:", e);
+          }
+        }
+
+        generateBtn.addEventListener("click", generateQR);
+
+        downloadBtn.addEventListener("click", downloadQR);
+
+        qrText.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            generateQR();
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

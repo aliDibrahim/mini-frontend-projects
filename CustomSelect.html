@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Custom Select</title>
+    <link
+      rel="icon"
+      href="https://img.icons8.com/ios-filled/50/cursor.png"
+      type="image/png"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+      .container {
+        width: 100%;
+        min-height: 100vh;
+        background: linear-gradient(
+          to left,
+          #0ed2f7,
+          #b2fefa,
+          #998ee0,
+          #43add0,
+          #8bdeda
+        );
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+      .selector {
+        width: 350px;
+        max-width: 95%;
+        margin: 40px auto;
+      }
+      #selectField {
+        width: 100%;
+        padding: 16px 24px;
+        margin-bottom: 24px;
+        background-color: rgba(255, 255, 255, 0.7);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+      }
+      #selectField img {
+        width: 16px;
+        height: 16px;
+        user-select: none;
+        transition-duration: 0.3s;
+      }
+      #selectField img.open {
+        rotate: 180deg;
+      }
+      ul {
+        width: 100%;
+        list-style: none;
+        border-radius: 6px;
+        background-color: rgba(255, 255, 255, 0.7);
+        overflow: hidden;
+        padding: 8px 16px;
+      }
+      .list-item {
+        width: 100%;
+        padding: 12px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      .list-item:hover {
+        background-color: rgba(255, 255, 255, 0.7);
+      }
+      ul.hide {
+        visibility: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="selector">
+        <div id="selectField">
+          <p id="selectText">select your item</p>
+          <img
+            width="50"
+            height="50"
+            src="https://img.icons8.com/ios-filled/50/expand-arrow--v1.png"
+            alt="expand-arrow--v1"
+            id="arrow"
+          />
+        </div>
+        <ul id="list" class="hide">
+          <li class="list-item">select item one</li>
+          <li class="list-item">select item two</li>
+          <li class="list-item">select item three</li>
+          <li class="list-item">select item four</li>
+          <li class="list-item">select item five</li>
+          <li class="list-item">select item six</li>
+          <li class="list-item">select item seven</li>
+          <li class="list-item">select item eight</li>
+          <li class="list-item">select item nine</li>
+          <li class="list-item">select item ten</li>
+        </ul>
+      </div>
+    </div>
+    <script>
+      let selectField = document.getElementById("selectField");
+      let selectText = document.getElementById("selectText");
+      let items = document.getElementsByClassName("list-item");
+      let list = document.getElementById("list");
+      let arrow = document.getElementById("arrow");
+
+      selectField.onclick = function () {
+        list.classList.toggle("hide");
+        arrow.classList.toggle("open");
+      };
+
+      for (item of items) {
+        item.onclick = function () {
+          selectText.innerHTML = this.textContent;
+          list.classList.add("hide");
+          arrow.classList.remove("open");
+        };
+      }
+    </script>
+  </body>
+</html>
